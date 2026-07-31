@@ -85,7 +85,7 @@ func ReadActivity(cont context.Context, filename string, out chan<- model.Interv
 			return stats, cont.Err()
 		}
 	}
-
+  
 	err = scanner.Err()
 	if err != nil {
 		return stats, fmt.Errorf("scanner error reading %s: %w", filename, err)
