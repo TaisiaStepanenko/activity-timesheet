@@ -27,6 +27,7 @@ func ReadActivity(cont context.Context, filename string, out chan<- model.Interv
 		return ReadStats{}, fmt.Errorf("cannot open file %s: %w", filename, err)
 	}
 	defer file.Close()
+	defer close(out)
 
 	scanner := bufio.NewScanner(file)
 	stats := ReadStats{}

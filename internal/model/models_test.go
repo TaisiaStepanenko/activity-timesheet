@@ -3,32 +3,27 @@ package model
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestInterval_StartTimeParse(t *testing.T) {
 	i := Interval{Start: "2026-03-02T09:12:41+03:00"}
 	parseTime, err := i.StartTimeParse()
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
+	require.NoError(t, err)
 
 	expected := time.Date(2026, 3, 2, 9, 12, 41, 0, time.FixedZone("", 3*3600))
-	if !parseTime.Equal(expected) {
-		t.Errorf("expected %v, got %v", expected, parseTime)
-	}
+	assert.Equal(t, expected.UTC(), parseTime.UTC())
 }
 
 func TestInterval_StopTimeParse(t *testing.T) {
 	i := Interval{Stop: "2026-03-02T09:12:41+03:00"}
 	parseTime, err := i.StopTimeParse()
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
+	require.NoError(t, err)
 
 	expected := time.Date(2026, 3, 2, 9, 12, 41, 0, time.FixedZone("", 3*3600))
-	if !parseTime.Equal(expected) {
-		t.Errorf("expected %v, got %v", expected, parseTime)
-	}
+	assert.Equal(t, expected.UTC(), parseTime.UTC())
 }
 
 func TestInterval_Duration(t *testing.T) {
@@ -38,13 +33,10 @@ func TestInterval_Duration(t *testing.T) {
 	}
 
 	dur, err := i.Duration()
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
+	require.NoError(t, err)
+
 	expected := 35*time.Minute + 22*time.Second
-	if dur !=expected {
-		t.Errorf("expected %v, got %v", expected, dur)
-	}
+	assert.Equal(t, expected, dur)
 }
 
 func TestInterval_IsZero(t *testing.T) {
@@ -54,13 +46,9 @@ func TestInterval_IsZero(t *testing.T) {
 	}
 
 	zeroDur, err := i.IsZero()
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
+	require.NoError(t, err)
 
-	if !zeroDur {
-		t.Errorf("expected zero interval")
-	}
+	assert.True(t, zeroDur)
 }
 
 func TestInterval_IsValid(t *testing.T) {
@@ -124,8 +112,10 @@ func TestInterval_IsValid(t *testing.T) {
 	for _, test := range testsInterval {
 		t.Run(test.name, func(t *testing.T) {
 			err := test.interval.IsValid()
-			if (err == nil) != test.expected {
-				t.Errorf("IsValid() error = %v, want %v", err, test.expected)
+			if test.expected {
+				assert.NoError(t, err)
+			} else {
+				assert.Error(t, err)
 			}
 		})
 	}
@@ -142,10 +132,6 @@ func TestNewDayInterval(t *testing.T) {
 
 	day := time.Date(2026, 3, 2, 0, 0, 0, 0, time.FixedZone("", 3*3600))
 	dayInterval := NewDayInterval(interval, day)
-	if dayInterval.Day != day {
-		t.Errorf("expected day %v, got %v", day, dayInterval.Day)
-	}
-	if dayInterval.Interval != interval {
-		t.Error("interval mismatch")
-	}
+	assert.Equal(t, day, dayInterval.Day)
+	assert.Equal(t, interval, dayInterval.Interval)
 }
