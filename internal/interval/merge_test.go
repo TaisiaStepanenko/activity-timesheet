@@ -120,3 +120,49 @@ func TestSplitByDay(t *testing.T) {
 		})
 	}
 }
+
+func TestGroupByUserDay(t *testing.T) {
+	loc := time.FixedZone("MSK", 3*3600)
+	intervals := []model.Interval{
+		{User: "ivanov", Comp: "pc1", Start: "2026-03-02T23:00:00+03:00", Stop: "2026-03-03T01:00:00+03:00"},
+		{User: "petrova", Comp: "pc2", Start: "2026-03-02T09:00:00+03:00", Stop: "2026-03-02T10:00:00+03:00"},
+		{User: "ivanov", Comp: "pc1", Start: "2026-03-03T09:00:00+03:00", Stop: "2026-03-03T10:00:00+03:00"},
+	}
+
+	grouped, err := GroupByUserDay(intervals, loc)
+	require.NoError(t, err)
+
+	assert.Len(t, grouped, 3)
+
+	// считаем группы для ivanov
+	ivanovCount := 0
+	for key := range grouped {
+		if key.User == "ivanov" {
+			ivanovCount++
+		}
+	}
+	assert.Equal(t, 2, ivanovCount)
+
+	// Проверяем, что в каждой группе есть интервалы
+	for _, vals := range grouped {
+		assert.NotEmpty(t, vals)
+	}
+}
+
+func TestComputeFact(t *testing.T) {
+	intervals := []model.Interval{
+		{User: "u", Comp: "c", Start: "2026-03-02T09:00:00+03:00", Stop: "2026-03-02T10:00:00+03:00"},
+		{User: "u", Comp: "c", Start: "2026-03-02T10:30:00+03:00", Stop: "2026-03-02T11:00:00+03:00"},
+	}
+
+	activeTime, beginWork, endWork, err := ComputeFact(intervals)
+	require.NoError(t, err)
+
+	expectedActive := 90*time.Minute
+	assert.Equal(t, expectedActive, activeTime)
+
+	expectedBegin, _ := time.Parse(time.RFC3339, "2026-03-02T09:00:00+03:00")
+	expectedEnd, _ := time.Parse(time.RFC3339, "2026-03-02T11:00:00+03:00")
+	assert.Equal(t, expectedBegin.UTC(), beginWork.UTC())
+	assert.Equal(t, expectedEnd.UTC(), endWork.UTC())
+}

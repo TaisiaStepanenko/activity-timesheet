@@ -86,3 +86,62 @@ func SplitByDay(interval model.Interval, loc *time.Location) ([]model.DayInterva
 	}
 	return result, nil
 }
+
+type UserDay struct {
+	User string
+	Day time.Time
+}
+
+// GroupByUserDay группирует интервалы по пользователю и календарному дню, предварительно производится разрез по границе суток
+func GroupByUserDay(intervals []model.Interval, location *time.Location) (map[UserDay][]model.Interval, error) {
+	grouped := make(map[UserDay][]model.Interval)
+
+	for _, interval := range intervals {
+		parts, err := SplitByDay(interval, location)
+		if err != nil {
+			return nil, err
+		}
+		for _, part := range parts {
+			key := UserDay{User: part.User, Day: part.Day}
+			grouped[key] = append(grouped[key], part.Interval)
+		}
+	}
+	return grouped, nil
+}
+
+// ComputeFact вычисляет для группы объединённых интервалов:
+// - active_time (суммарная длительность после объединения)
+// - begin_work (начало самого раннего интервала)
+// - end_work (конец самого позднего интервала)
+// Если интервалов нет, возвращает нулевые значения.
+func ComputeFact(intervals []model.Interval) (time.Duration, time.Time, time.Time, error) {
+	if len(intervals) == 0 {
+		return 0, time.Time{}, time.Time{}, nil
+	}
+
+	mergedIntervals := Merge(intervals)
+	if len(mergedIntervals) == 0 {
+		return 0, time.Time{}, time.Time{}, nil
+	}
+
+	var total time.Duration
+	for _, interval := range mergedIntervals {
+		dur, err := interval.Duration()
+		if (err != nil) {
+			return 0, time.Time{}, time.Time{}, err 
+		}
+		total += dur
+	}
+
+	start, err := mergedIntervals[0].StartTimeParse()
+	if (err != nil) {
+		return 0, time.Time{}, time.Time{}, err 
+	}
+
+	stop, err := mergedIntervals[len(mergedIntervals)-1].StopTimeParse()
+	if (err != nil) {
+		return 0, time.Time{}, time.Time{}, err 
+	}
+
+	return total, start, stop, nil
+} 
