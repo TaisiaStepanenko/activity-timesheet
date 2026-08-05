@@ -101,7 +101,7 @@ func GetDayInfo(calendarFile *CalendarFile, user string, date time.Time) (*DayIn
 
 	// Проверить исключения
 	for _, exception := range userCalendar.Exceptions {
-		excDate, err := time.Parse("2006-01-02", exception.Date)
+		excDate, err := time.ParseInLocation("2006-01-02", exception.Date, loc)
 		if err != nil {
 			return nil, fmt.Errorf("invalid exception date %s: %w", exception.Date, err)
 		}
@@ -153,14 +153,16 @@ func GetDayInfo(calendarFile *CalendarFile, user string, date time.Time) (*DayIn
 
 	// Проверка отпусков 
 	for _, vacation := range userCalendar.Vacations {
-		from, err := time.Parse("2006-01-02", vacation.From)
+		from, err := time.ParseInLocation("2006-01-02", vacation.From, loc)
 		if err != nil {
 			return nil, fmt.Errorf("invalid vacation from %s: %w", vacation.From, err)
 		}
-		to, err := time.Parse("2006-01-02", vacation.To)
+		from = from.In(loc)
+		to, err :=  time.ParseInLocation("2006-01-02", vacation.To, loc)
 		if err != nil {
 			return nil, fmt.Errorf("invalid vacation to %s: %w", vacation.To, err)
 		}
+		to = to.In(loc)
 
 		// Проверяем попадает ли дата в интервал c from до to 
 		if (date.Equal(from) || date.After(from)) && (date.Equal(to) || date.Before(to)) {
@@ -208,6 +210,9 @@ func GetDayInfo(calendarFile *CalendarFile, user string, date time.Time) (*DayIn
 	begin := time.Date(date.Year(), date.Month(), date.Day(), beginTime.Hour(), beginTime.Minute(), beginTime.Second(), 0, loc)
 	end := time.Date(date.Year(), date.Month(), date.Day(), endTime.Hour(), endTime.Minute(), endTime.Second(), 0, loc)
 	norm := end.Sub(begin)
+	if norm < 0 {
+		norm += 24 * time.Hour
+	}
 
 	// Вычитаем перерывы
 	var totalBreaks time.Duration

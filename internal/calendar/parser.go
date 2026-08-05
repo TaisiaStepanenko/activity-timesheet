@@ -171,8 +171,7 @@ func validateBreaks(breaks []Break, shiftBegin, shiftEnd, calendarName, weekDay 
 		nextStart, _ := parseTimeOnly(sortedBreaks[i+1].Begin)
 
 		if !curEnd.Before(nextStart) && !curEnd.Equal(nextStart) {
-			return fmt.Errorf("calendar %s: breaks %s-%s and %s-%s overlap or touch incorrectly", calendarName, sortedBreaks[i].End, sortedBreaks[i+1].Begin, sortedBreaks[i+1].End)
-		}
+return fmt.Errorf("calendar %s: breaks %s-%s and %s-%s overlap or touch incorrectly", calendarName, sortedBreaks[i].Begin, sortedBreaks[i].End, sortedBreaks[i+1].Begin, sortedBreaks[i+1].End)		}
 	}
 	return nil
 }

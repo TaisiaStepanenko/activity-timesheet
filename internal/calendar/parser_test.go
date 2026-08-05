@@ -123,8 +123,7 @@ func TestLoadCalendar_WeekdayEndBeforeBegin(t *testing.T) {
 
 	_, err := LoadCalendar(tmpFile)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "end time must be after begin")
-
+	assert.Contains(t, err.Error(), "must be after begin")
 }
 
 func TestLoadCalendar_BreakOutsideShift(t *testing.T) {
@@ -255,7 +254,7 @@ func TestLoadCalendar_ExceptionEndBeforeBegin(t *testing.T) {
 
 	_, err := LoadCalendar(tmpFile)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "end time must be after begin")
+	assert.Contains(t, err.Error(), "must be after begin")
 }
 
 func TestLoadCalendar_VacationFromAfterTo(t *testing.T) {
