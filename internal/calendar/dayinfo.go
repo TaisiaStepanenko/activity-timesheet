@@ -39,8 +39,8 @@ func (calendarFile *CalendarFile) GetUserCalendar(user string) *Calendar {
 	return nil
 }
 
-// parseTimezone, чтобы превратить строку часового пояса (например, "+03:00" или "-05:00") в объект *time.Location
-func parseTimezone(tz string) (*time.Location, error) {
+// ParseTimezone, чтобы превратить строку часового пояса (например, "+03:00" или "-05:00") в объект *time.Location
+func ParseTimezone(tz string) (*time.Location, error) {
     if len(tz) == 0 {
         return nil, fmt.Errorf("timezone is empty")
     }
@@ -92,7 +92,7 @@ func GetDayInfo(calendarFile *CalendarFile, user string, date time.Time) (*DayIn
 		return nil, fmt.Errorf("timezone is empty")
 	}
 
-	loc, err := parseTimezone(tz)
+	loc, err := ParseTimezone(tz)
 	if err != nil {
 		return nil, fmt.Errorf("invalid timezone: %w", err)
 	}
