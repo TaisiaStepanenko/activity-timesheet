@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "timezone": "+03:00",
+  "calendars": [
+    {
+      "name": "five-day",
+      "users": ["ivanov"],
+      "enabled": true,
+      "week": [
+        {"weekday": "mon", "day_off": false, "begin": "09:00:00", "end": "18:00:00", "breaks": [{"name": "lunch", "begin": "13:00:00", "end": "14:00:00"}]},
+        {"weekday": "tue", "day_off": false, "begin": "09:00:00", "end": "18:00:00", "breaks": [{"name": "lunch", "begin": "13:00:00", "end": "14:00:00"}]},
+        {"weekday": "wed", "day_off": false, "begin": "09:00:00", "end": "18:00:00", "breaks": [{"name": "lunch", "begin": "13:00:00", "end": "14:00:00"}]},
+        {"weekday": "thu", "day_off": false, "begin": "09:00:00", "end": "18:00:00", "breaks": [{"name": "lunch", "begin": "13:00:00", "end": "14:00:00"}]},
+        {"weekday": "fri", "day_off": false, "begin": "09:00:00", "end": "17:00:00"},
+        {"weekday": "sat", "day_off": true},
+        {"weekday": "sun", "day_off": true}
+      ],
+      "holidays": [{"name": "Новый год", "month": 1, "day": 1}],
+      "exceptions": [],
+      "vacations": []
+    }
+  ]
+}

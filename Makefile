@@ -9,9 +9,10 @@ all: mod build test
 mod:
 	go mod tidy
 
+## Сборка бинарного файла
+## -o задаёт имя выходного файла
 build:
-	mkdir -p $(BUILD_DIR)
-	go build -o $(BUILD_DIR)/$(BINARY_NAME) $(MAIN_PKG)
+	go build -o ./$(BINARY_NAME) $(MAIN_PKG)
 
 test:
 	go test -race -cover ./...

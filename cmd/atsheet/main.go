@@ -6,20 +6,21 @@ import (
 )
 
 func main() {
-	if len(os.Args) > 1 && os.Args[1] == "version" {
-		fmt.Println("atsheet version 0.1.0")
-		return
+	if len(os.Args) < 2 {
+		fmt.Println("atsheet - activity timesheet tool")
+        fmt.Println("Usage: atsheet <command> [flags]")
+        fmt.Println("Commands: build, report, diff, generate, validate, version")
+        os.Exit(0)
 	}
-	fmt.Println("atsheet - activity timesheet tool")
-	fmt.Println("Usage: atsheet <command> [flags]")
-	fmt.Println()
-	fmt.Println("Commands:")
-	fmt.Println("  build      Build timesheet from activity and calendar")
-	fmt.Println("  report     Generate Markdown report")
-	fmt.Println("  diff       Compare two timesheets")
-	fmt.Println("  generate   Generate synthetic data triple")
-	fmt.Println("  validate   Validate calendar and activity stream")
-	fmt.Println("  version    Show version")
-	fmt.Println()
-	fmt.Println("Run 'atsheet <command> --help' for more details.")
+
+	switch os.Args[1] {
+	case "version":
+		fmt.Println("atsheet version 0.1.0")
+	case "validate":
+		os.Exit(RunValidate(os.Args[2:]))
+	default:
+		fmt.Printf("unknown command: %s\n", os.Args[1])
+        os.Exit(2)
+	}
+	
 }
