@@ -108,3 +108,18 @@ func NewDayInterval(i Interval, day time.Time) DayInterval {
 		Day: day,
 	}
 }
+
+
+type SummaryRow struct {
+	User             string           `json:"user"`
+	PeriodFrom       string           `json:"period_from"`
+	PeriodTo         string           `json:"period_to"`
+	WorkDays         int              `json:"work_days"`
+	DaysWithActivity int              `json:"days_with_activity"`
+	NormTotalMS      int64            `json:"norm_total_ms"`
+	ActiveTotalMS    int64            `json:"active_total_ms"`
+	ActiveCutTotalMS int64            `json:"aactive_cut_total_ms"`
+	BalanceMS        int64            `json:"balance_ms"`
+	ByClass          map[string]int   `json:"by_class"`
+	BalanceByClass   map[string]int64 `json:"balance_by_class"`
+}

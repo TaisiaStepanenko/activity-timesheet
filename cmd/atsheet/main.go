@@ -18,6 +18,8 @@ func main() {
 		fmt.Println("atsheet version 0.1.0")
 	case "validate":
 		os.Exit(RunValidate(os.Args[2:]))
+	case "build":
+		os.Exit(RunBuild(os.Args[2:]))
 	default:
 		fmt.Printf("unknown command: %s\n", os.Args[1])
         os.Exit(2)
